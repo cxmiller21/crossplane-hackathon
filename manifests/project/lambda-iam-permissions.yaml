@@ -1,0 +1,74 @@
+apiVersion: iam.aws.upbound.io/v1beta1
+kind: Role
+metadata:
+  annotations:
+    meta.upbound.io/example-id: connect/v1beta1/lambdafunctionassociation
+  labels:
+    testing.upbound.io/example-name: hackathon-role
+  name: crossplane-lambda-role
+spec:
+  forProvider:
+    assumeRolePolicy: |
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Action": "sts:AssumeRole",
+            "Principal": {
+              "Service": "lambda.amazonaws.com"
+            },
+            "Effect": "Allow",
+            "Sid": ""
+          }
+        ]
+      }
+---
+apiVersion: iam.aws.upbound.io/v1beta1
+kind: Policy
+metadata:
+  annotations:
+    meta.upbound.io/example-id: qldb/v1beta1/stream
+  labels:
+    testing.upbound.io/example-name: hackathon-policy
+  name: hackathon-lambda-policy
+spec:
+  forProvider:
+    policy: |
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Action": "logs:CreateLogGroup",
+            "Resource": "arn:aws:logs:us-east-1:*:*"
+          },
+          {
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ],
+            "Resource": [
+                "arn:aws:logs:us-east-1:*:log-group:/aws/lambda/*:*"
+            ]
+          },
+          {
+            "Effect": "Allow",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::*"
+          }
+        ]
+      }
+---
+apiVersion: iam.aws.upbound.io/v1beta1
+kind: RolePolicyAttachment
+metadata:
+  name: lambda-iam-permissions
+spec:
+  forProvider:
+    policyArnSelector:
+      matchLabels:
+        testing.upbound.io/example-name: hackathon-policy
+    roleSelector:
+      matchLabels:
+        testing.upbound.io/example-name: hackathon-role

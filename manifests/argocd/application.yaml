@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: hackathon-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'git@github.com:<user>/<repo-name>.git'
+    path: manifests/project
+    targetRevision: HEAD
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: hackathon
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

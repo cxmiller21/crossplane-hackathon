@@ -1,0 +1,24 @@
+apiVersion: lambda.aws.upbound.io/v1beta1
+kind: Function
+metadata:
+  annotations:
+    meta.upbound.io/example-id: connect/v1beta1/function
+  labels:
+    testing.upbound.io/sdg: hackathon
+  name: crossplane-slack-function
+spec:
+  forProvider:
+    environment:
+      - variables:
+          SLACK_WEBHOOK_URL: https://hooks.slack.com/services/update
+          SLACK_CHANNEL: update
+    handler: lambda_function.lambda_handler
+    region: us-east-1
+    # (From my understanding) the IAM role has to be created and managed by Crossplane
+    # Otherwise the role will "not be found"
+    roleRef:
+      name: crossplane-lambda-role
+    runtime: python3.9
+    # S3 bucket that was created in ./manifests/project/s3-bucket.yaml
+    s3Bucket: crossplane-bucket-
+    s3Key: crossplane-slack-function.zip
