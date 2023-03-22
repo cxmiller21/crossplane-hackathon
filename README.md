@@ -90,6 +90,12 @@ git add .
 git commit -m "Initial commit"
 git push
 
+# Configure ArgoCD to sync with your git repo
+# In the ArgoCD UI go to Settings > Repositories > Add/New
+# Fill in the details for your git repo and
+# add the private key to ArgoCD > Settings > Repositories
+# Click "Create" and you should see your repo successfully linked in ArgoCD
+
 # Create the ArgoCD Application
 k create -f ./manifests/argocd/application.yaml
 
